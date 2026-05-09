@@ -1,87 +1,98 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
-import java.util.Scanner;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
-public class TaskManager {  // Fixed Class Name
-    private static ArrayList<Task> tasks = new ArrayList<>();  // Fixed Task Class Name
-    private static Scanner scanner = new Scanner(System.in);
+class TaskManager {
+    private static final ArrayList<Task> tasks = new ArrayList<>();
+
+    private final DefaultListModel<String> listModel = new DefaultListModel<>();
+    private final JList<String> taskList = new JList<>(listModel);
+    private final JTextField taskInput = new JTextField(20);
 
     public static void main(String[] args) {
-        System.out.println("=== Java Task Manager ===");
-        while (true) {
-            showMenu();
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Clear buffer
-
-            switch (choice) {
-                case 1 -> addTask();
-                case 2 -> viewTasks();
-                case 3 -> markTaskDone();
-                case 4 -> deleteTask();
-                case 5 -> {
-                    System.out.println("Exiting... cya 👋");
-                    return;
-                }
-                default -> System.out.println("Invalid choice! Try again.");
-            }
-        }
+        SwingUtilities.invokeLater(() -> new TaskManager().createAndShowUI());
     }
 
-    private static void showMenu() {
-        System.out.println("\n1. Add Task");
-        System.out.println("2. View Tasks");
-        System.out.println("3. Mark Task as Done");
-        System.out.println("4. Delete Task");
-        System.out.println("5. Exit");
-        System.out.print("Choose: ");
+    private void createAndShowUI() {
+        JFrame frame = new JFrame("Java Task Manager");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 350);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout(10, 10));
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(new JLabel("Task:"));
+        topPanel.add(taskInput);
+
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(e -> addTask());
+        topPanel.add(addButton);
+
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(new JScrollPane(taskList), BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton doneButton = new JButton("Mark Done");
+        doneButton.addActionListener(e -> markTaskDone());
+
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(e -> deleteTask());
+
+        bottomPanel.add(doneButton);
+        bottomPanel.add(deleteButton);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+
+        frame.setVisible(true);
     }
 
-    private static void addTask() {
-        System.out.print("Enter task name: ");
-        String name = scanner.nextLine();
-        tasks.add(new Task(name));  // Fixed Task Class Name
-        System.out.println("Task added!");
-    }
-
-    private static void viewTasks() {
-        if (tasks.isEmpty()) {
-            System.out.println("No tasks found.");
+    private void addTask() {
+        String name = taskInput.getText().trim();
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please enter a task name.");
             return;
         }
 
-        System.out.println("\nYour Tasks:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
-        }
+        tasks.add(new Task(name));
+        taskInput.setText("");
+        refreshTasks();
     }
 
-    private static void markTaskDone() {
-        viewTasks();
-        if (tasks.isEmpty()) return;
-
-        System.out.print("Enter task number to mark done: ");
-        int index = scanner.nextInt() - 1;
-        if (index >= 0 && index < tasks.size()) {
-            tasks.get(index).markDone();
-            System.out.println("Marked as done!");
-        } else {
-            System.out.println("Invalid task number.");
+    private void markTaskDone() {
+        int index = taskList.getSelectedIndex();
+        if (index < 0) {
+            JOptionPane.showMessageDialog(null, "Select a task first.");
+            return;
         }
+
+        tasks.get(index).markDone();
+        refreshTasks();
     }
 
-    private static void deleteTask() {
-        viewTasks();
-        if (tasks.isEmpty()) return;
+    private void deleteTask() {
+        int index = taskList.getSelectedIndex();
+        if (index < 0) {
+            JOptionPane.showMessageDialog(null, "Select a task first.");
+            return;
+        }
 
-        System.out.print("Enter task number to delete: ");
-        int index = scanner.nextInt() - 1;
-        if (index >= 0 && index < tasks.size()) {
-            tasks.remove(index);
-            System.out.println("Task deleted!");
-        } else {
-            System.out.println("Invalid task number.");
+        tasks.remove(index);
+        refreshTasks();
+    }
+
+    private void refreshTasks() {
+        listModel.clear();
+        for (Task task : tasks) {
+            listModel.addElement(task.toString());
         }
     }
 }
-
-//1. Run "javac Task.java TaskManager.java"
-//2. Run "java TaskManager" in bash under your terminal

@@ -1,4 +1,4 @@
-public class Task {
+class Task {
     private String name;
     private boolean isDone;
 
@@ -24,5 +24,3 @@ public class Task {
         return (isDone ? "[✓] " : "[ ] ") + name;
     }
 }
-//1. Run "javac Task.java TaskManager.java"
-//2. Run "java TaskManager" in bash under your terminal
