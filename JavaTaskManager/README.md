@@ -1,44 +1,53 @@
-# Java Task Manager
+# Task Orbit Web App
 
-A basic desktop task manager built with Java Swing.
+A basic task manager web app built with HTML, CSS, and JavaScript.
 
 ## Features
 
 - Add a task
-- View tasks in a list
-- Mark selected task as done
-- Delete selected task
+- Mark task as done
+- Delete task
+- Clear all completed tasks
+- Persist tasks in browser local storage
 
 ## Project Files
 
-- `task.java` - Task model
-- `taskmanager.java` - Swing UI and task actions
+- `index.html` - App structure
+- `styles.css` - Styling, animations, and responsive layout
+- `app.js` - Task logic and local storage
 
-## Requirements
+## Run Locally
 
-- Java JDK 11 or newer
+### Option 1: Open directly
 
-## How to Run
+Open `index.html` in your browser.
 
-1. Open terminal in this folder:
+### Option 2: Serve from terminal
 
-```bash
-cd /Users/gazanfar/Documents/GitHub/Java-Task-Manager/JavaTaskManager
-```
-
-2. Compile:
+If you have Node.js:
 
 ```bash
-javac task.java taskmanager.java
+npx serve .
 ```
 
-3. Run:
+Then open the local URL shown in terminal.
 
-```bash
-java TaskManager
-```
+## Deploy to Vercel
 
-## Notes
+1. Push this folder to GitHub.
+2. In Vercel, click **Add New Project** and import the repo.
+3. Use these settings:
+   - Framework Preset: `Other`
+   - Root Directory: `./`
+   - Build Command: leave empty
+   - Output Directory: leave empty
+4. Click **Deploy**.
 
-- The app is GUI-based, so the terminal may not print output while the window is open.
-- Close the app window to stop the program.
+Vercel will host this as a static site.
+
+## Legacy Java Version
+
+The original desktop Java Swing version is still in:
+
+- `task.java`
+- `taskmanager.java`
